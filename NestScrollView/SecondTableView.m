@@ -7,7 +7,7 @@
 
 #import "SecondTableView.h"
 
-@interface SecondTableView ()
+@interface SecondTableView ()<UITableViewDelegate, UITableViewDataSource>
 
 @end
 

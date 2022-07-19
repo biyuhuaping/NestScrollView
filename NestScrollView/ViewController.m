@@ -9,6 +9,26 @@
 #import "TopView.h"
 #import "FirstTableView.h"
 #import "SecondTableView.h"
+#import "Masonry.h"
+
+#define isIPhoneXSeries ({\
+BOOL iPhoneXSeries = NO;\
+if (UIDevice.currentDevice.userInterfaceIdiom != UIUserInterfaceIdiomPhone) {\
+(iPhoneXSeries);\
+}\
+if (@available(iOS 11.0, *)) {\
+UIWindow *mainWindow = [[[UIApplication sharedApplication] delegate] window];\
+if (mainWindow.safeAreaInsets.bottom > 0.0) {\
+iPhoneXSeries = YES;\
+}\
+}\
+(iPhoneXSeries);\
+})
+
+///状态栏高度
+#define kStatusBarHeight  (CGFloat)(isIPhoneXSeries?(44):(20))
+/// 状态栏和导航栏总高度
+#define kNavBarHeight  (CGFloat)(isIPhoneXSeries?(88):(64))
 
 #define kItemheight 50
 #define kTopViewHeight 200
@@ -29,10 +49,29 @@
     
     [self.view addSubview:self.bottomScrollView];
     [self.view addSubview:self.topView];
+    
+    UIView *navBar = [[UIView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, kNavBarHeight)];
+    navBar.backgroundColor = UIColor.blueColor;
+    navBar.alpha = 0.5;
+    [self.view addSubview:navBar];
+    
+    [self.topView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(navBar.mas_bottom);
+        make.leading.trailing.mas_equalTo(self.view);
+        make.height.mas_equalTo(kTopViewHeight);
+    }];
+    
+    [self.bottomScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(self.topView.mas_bottom);
+        make.leading.trailing.mas_equalTo(self.view);
+        make.height.mas_equalTo(kScreenHeight-kNavBarHeight-kItemheight);
+    }];
 }
 
-#pragma mark - 底部的scrollViuew的代理方法scrollViewDidScroll
+#pragma mark - 底部的scrollViuew横向滑动
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    NSLog(@"%.2f, %.2f",scrollView.contentOffset.x, scrollView.contentOffset.y);
+    
     CGFloat placeholderOffset = 0;
     if (self.topView.selectedIndex == 0) {
         if (self.firstTableView.contentOffset.y > CGRectGetHeight(self.topView.frame) - kItemheight) {
@@ -68,6 +107,18 @@
         
         [scroll addSubview:self.firstTableView];
         [scroll addSubview:self.secondTableView];
+        
+//        [self.firstTableView mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.top.leading.trailing.bottom.mas_equalTo(scroll);
+////            make.edges.mas_equalTo(scroll);
+//            make.width.mas_equalTo(kScreenWidth);
+////            make.height.mas_equalTo(kScreenHeight);
+//        }];
+//        [self.secondTableView mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.edges.mas_equalTo(scroll);
+////            make.width.mas_equalTo(kScreenWidth);
+//            make.height.mas_equalTo(kScreenHeight);
+//        }];
         _bottomScrollView = scroll;
     }
     return _bottomScrollView;
@@ -77,6 +128,7 @@
 - (TopView *)topView{
     if (!_topView) {
         _topView = [[TopView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kTopViewHeight)];
+//        _topView = [[TopView alloc] initWithFrame:CGRectZero];
         _topView.itemHeight = kItemheight;
         __weak typeof(self) WS = self;
         _topView.block = ^(NSInteger index) {
@@ -96,7 +148,9 @@
 - (FirstTableView *)firstTableView{
     if (!_firstTableView) {
         _firstTableView = [[FirstTableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+//        _firstTableView = [[FirstTableView alloc] initWithFrame:CGRectZero];
         _firstTableView.topViewH = CGRectGetHeight(self.topView.frame);
+        _firstTableView.itemViweH = kItemheight;
         __weak typeof(self) WS = self;
         _firstTableView.scrollBlock = ^(UIScrollView *scrollView) {
             [WS updateTopViewFrame:scrollView];
@@ -110,7 +164,8 @@
     if (!_secondTableView) {
         CGRect frame = self.view.bounds;
         frame.origin.x = kScreenWidth;
-        _secondTableView = [[SecondTableView alloc] initWithFrame:frame style:UITableViewStyleGrouped];
+                _secondTableView = [[SecondTableView alloc] initWithFrame:frame style:UITableViewStyleGrouped];
+//        _secondTableView = [[SecondTableView alloc] initWithFrame:CGRectZero];
         _secondTableView.topViewH = CGRectGetHeight(self.topView.frame);
         __weak typeof(self) WS = self;
         _secondTableView.scrollBlock = ^(UIScrollView *scrollView) {
@@ -124,15 +179,25 @@
     CGFloat placeHolderHeight = CGRectGetHeight(self.topView.frame) - self.topView.itemHeight;
     CGFloat offsetY = scrollView.contentOffset.y;
     
+    NSLog(@"offsetY：%.2f, placeHolderHeight：%.2f", offsetY, placeHolderHeight);
+
     CGRect frame = self.topView.frame;
+    CGFloat y = 0.0;
     if (offsetY >= 0 && offsetY <= placeHolderHeight) {
         frame.origin.y = -offsetY;
+        y = -offsetY;
     } else if (offsetY > placeHolderHeight) {
-        frame.origin.y = - placeHolderHeight;
-    } else if (offsetY <0) {
-        frame.origin.y =  - offsetY;
+        frame.origin.y = -placeHolderHeight;
+        y = -placeHolderHeight;
+    } else if (offsetY < 0) {
+        frame.origin.y = 0;
+        y = 0;
     }
-    self.topView.frame = frame;
+//    self.topView.frame = frame;
+    
+    [self.topView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.top.offset(y + kNavBarHeight);
+    }];
 }
 
 @end
