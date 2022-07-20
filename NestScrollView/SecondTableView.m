@@ -19,7 +19,7 @@
     self.dataSource = self;
     self.delegate = self;
     
-    self.scrollIndicatorInsets = UIEdgeInsetsMake(self.topViewH, 0, 0, 0);
+//    self.scrollIndicatorInsets = UIEdgeInsetsMake(self.topViewH, 0, 0, 0);
     
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, self.topViewH)];
     headerView.backgroundColor = UIColor.orangeColor;
