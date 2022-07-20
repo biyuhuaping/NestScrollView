@@ -26,7 +26,7 @@
 
 - (void)setItemHeight:(CGFloat)itemHeight{
     _itemHeight = itemHeight;
-    self.backgroundColor = UIColor.redColor;
+    self.backgroundColor = UIColor.lightGrayColor;
     
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeSystem];
     leftBtn.frame = CGRectMake(0, self.frame.size.height - itemHeight, kScreenWidth /2, itemHeight);
