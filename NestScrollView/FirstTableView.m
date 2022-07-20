@@ -21,9 +21,9 @@
     self.dataSource = self;
     self.delegate = self;
     
-    self.scrollIndicatorInsets = UIEdgeInsetsMake(headViewHeight, 0, 0, 0);
+    self.scrollIndicatorInsets = UIEdgeInsetsMake(self.topViewH + headViewHeight, 0, 0, 0);
     
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, headViewHeight)];
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, self.topViewH + headViewHeight)];
     headerView.backgroundColor = UIColor.systemGreenColor;
     self.tableHeaderView = headerView;
     
