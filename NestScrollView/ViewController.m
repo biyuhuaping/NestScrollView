@@ -122,7 +122,7 @@ iPhoneXSeries = YES;\
 - (FirstTableView *)firstTableView{
     if (!_firstTableView) {
         _firstTableView = [[FirstTableView alloc] init];
-        _firstTableView.frame = CGRectMake(0, kNavBarHeight, kScreenWidth, kScreenHeight - kNavBarHeight);
+        _firstTableView.frame = CGRectMake(0, 0, kScreenWidth, kScreenHeight - kNavBarHeight);
         _firstTableView.itemViweH = kItemheight;
         _firstTableView.topViewH = CGRectGetHeight(self.topView.frame);
         __weak typeof(self) WS = self;
@@ -137,7 +137,7 @@ iPhoneXSeries = YES;\
 - (SecondTableView *)secondTableView{
     if (!_secondTableView) {
         _secondTableView = [[SecondTableView alloc] init];
-        _secondTableView.frame = CGRectMake(kScreenWidth, kNavBarHeight, kScreenWidth, kScreenHeight - kNavBarHeight);
+        _secondTableView.frame = CGRectMake(kScreenWidth, 0, kScreenWidth, kScreenHeight - kNavBarHeight);
         _secondTableView.topViewH = CGRectGetHeight(self.topView.frame);
         __weak typeof(self) WS = self;
         _secondTableView.scrollBlock = ^(UIScrollView *scrollView) {

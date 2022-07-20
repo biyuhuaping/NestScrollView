@@ -7,7 +7,7 @@
 
 #import "FirstTableView.h"
 
-#define headViewHeight  50
+#define headViewHeight  100
 
 @interface FirstTableView ()<UITableViewDelegate, UITableViewDataSource>
 
