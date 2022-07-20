@@ -47,8 +47,8 @@ iPhoneXSeries = YES;\
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self.view addSubview:self.bottomScrollView];
     [self.view addSubview:self.topView];
+    [self.view addSubview:self.bottomScrollView];
     
     UIView *navBar = [[UIView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, kNavBarHeight)];
     navBar.backgroundColor = UIColor.blueColor;
@@ -64,7 +64,8 @@ iPhoneXSeries = YES;\
     [self.bottomScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self.topView.mas_bottom);
         make.leading.trailing.mas_equalTo(self.view);
-        make.height.mas_equalTo(kScreenHeight-kNavBarHeight-kItemheight);
+//        make.height.mas_equalTo(kScreenHeight-kNavBarHeight-kItemheight);
+        make.bottom.mas_equalTo(self.view);
     }];
 }
 
@@ -107,7 +108,7 @@ iPhoneXSeries = YES;\
         
         [scroll addSubview:self.firstTableView];
         [scroll addSubview:self.secondTableView];
-        
+
 //        [self.firstTableView mas_makeConstraints:^(MASConstraintMaker *make) {
 //            make.top.leading.trailing.bottom.mas_equalTo(scroll);
 ////            make.edges.mas_equalTo(scroll);
@@ -147,8 +148,9 @@ iPhoneXSeries = YES;\
 
 - (FirstTableView *)firstTableView{
     if (!_firstTableView) {
-        _firstTableView = [[FirstTableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+        _firstTableView = [[FirstTableView alloc] init];
 //        _firstTableView = [[FirstTableView alloc] initWithFrame:CGRectZero];
+        _firstTableView.frame = CGRectMake(0, 0, kScreenWidth, kScreenHeight - kNavBarHeight - kItemheight);
         _firstTableView.topViewH = CGRectGetHeight(self.topView.frame);
         _firstTableView.itemViweH = kItemheight;
         __weak typeof(self) WS = self;
@@ -164,8 +166,9 @@ iPhoneXSeries = YES;\
     if (!_secondTableView) {
         CGRect frame = self.view.bounds;
         frame.origin.x = kScreenWidth;
-                _secondTableView = [[SecondTableView alloc] initWithFrame:frame style:UITableViewStyleGrouped];
+        _secondTableView = [[SecondTableView alloc] init];
 //        _secondTableView = [[SecondTableView alloc] initWithFrame:CGRectZero];
+        _secondTableView.frame = CGRectMake(kScreenWidth, 0, kScreenWidth, kScreenHeight - kNavBarHeight - kItemheight);
         _secondTableView.topViewH = CGRectGetHeight(self.topView.frame);
         __weak typeof(self) WS = self;
         _secondTableView.scrollBlock = ^(UIScrollView *scrollView) {
@@ -178,20 +181,17 @@ iPhoneXSeries = YES;\
 - (void)updateTopViewFrame:(UIScrollView *)scrollView{
     CGFloat placeHolderHeight = CGRectGetHeight(self.topView.frame) - self.topView.itemHeight;
     CGFloat offsetY = scrollView.contentOffset.y;
-    
-    NSLog(@"offsetY：%.2f, placeHolderHeight：%.2f", offsetY, placeHolderHeight);
-
-    CGRect frame = self.topView.frame;
+        
     CGFloat y = 0.0;
-    if (offsetY >= 0 && offsetY <= placeHolderHeight) {
-        frame.origin.y = -offsetY;
+    if (offsetY >= 0 && (offsetY <= placeHolderHeight)) {
+        NSLog(@"1- offsetY：%.2f <= placeHolderHeight：%.2f", offsetY, placeHolderHeight);
         y = -offsetY;
     } else if (offsetY > placeHolderHeight) {
-        frame.origin.y = -placeHolderHeight;
+        NSLog(@"2- offsetY：%.2f > placeHolderHeight：%.2f", offsetY, placeHolderHeight);
         y = -placeHolderHeight;
     } else if (offsetY < 0) {
-        frame.origin.y = 0;
-        y = 0;
+        NSLog(@"3- offsetY：%.2f < 0,  placeHolderHeight：%.2f", offsetY, placeHolderHeight);
+        y = -offsetY;
     }
 //    self.topView.frame = frame;
     
