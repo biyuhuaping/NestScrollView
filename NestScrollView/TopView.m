@@ -24,12 +24,19 @@
 
 @implementation TopView
 
-- (void)setItemHeight:(CGFloat)itemHeight{
-    _itemHeight = itemHeight;
+- (instancetype)initWithFrame:(CGRect)frame{
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self configUI];
+    }
+    return self;
+}
+
+- (void)configUI{
     self.backgroundColor = UIColor.lightGrayColor;
     
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeSystem];
-    leftBtn.frame = CGRectMake(0, self.frame.size.height - itemHeight, kScreenWidth /2, itemHeight);
+    leftBtn.frame = CGRectMake(0, self.frame.size.height - self.itemHeight, kScreenWidth /2, self.itemHeight);
     [leftBtn setTitle:@"FirstItem" forState:UIControlStateNormal];
     leftBtn.backgroundColor = [UIColor whiteColor];
     leftBtn.layer.borderWidth = 0.5;
@@ -42,7 +49,7 @@
     _leftBtn = leftBtn;
     
     UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeSystem];
-    rightBtn.frame = CGRectMake(kScreenWidth /2, self.frame.size.height - itemHeight, kScreenWidth /2, itemHeight);
+    rightBtn.frame = CGRectMake(kScreenWidth /2, self.frame.size.height - self.itemHeight, kScreenWidth /2, self.itemHeight);
     [rightBtn setTitle:@"SecondItem" forState:UIControlStateNormal];
     rightBtn.backgroundColor = [UIColor whiteColor];
     rightBtn.layer.borderWidth = 0.5;
@@ -52,15 +59,15 @@
     [rightBtn addTarget:self action:@selector(buttonAction:) forControlEvents:UIControlEventTouchUpInside];
     rightBtn.tag = 1;
     [self addSubview:rightBtn];
-    _rightBtn = rightBtn;
-    
-    self.leftBtnFrame = leftBtn.frame;
-    self.rightBtnFrame = rightBtn.frame;
+    _rightBtn = rightBtn;    
+}
+
+- (CGFloat)itemHeight{
+    return 50;
 }
 
 - (void)setSelectedIndex:(NSInteger)selectedIndex{
     _selectedIndex = selectedIndex;
-    
     if (selectedIndex == 0) {
         [_leftBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
         [_rightBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];

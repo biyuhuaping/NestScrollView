@@ -25,12 +25,11 @@ iPhoneXSeries = YES;\
 (iPhoneXSeries);\
 })
 
-///状态栏高度
+/// 状态栏高度
 #define kStatusBarHeight  (CGFloat)(isIPhoneXSeries?(44):(20))
 /// 状态栏和导航栏总高度
 #define kNavBarHeight  (CGFloat)(isIPhoneXSeries?(88):(64))
-
-#define kItemheight 50
+/// topView的高
 #define kTopViewHeight 200
 
 @interface ViewController ()<UIScrollViewDelegate>
@@ -68,21 +67,22 @@ iPhoneXSeries = YES;\
     }];
 }
 
-#pragma mark - 底部的scrollViuew横向滑动
+#pragma mark - scrollViuew
+//父视图滚动的回调，用于横向滚动判断
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
     NSLog(@"%.2f, %.2f",scrollView.contentOffset.x, scrollView.contentOffset.y);
     
     CGFloat placeholderOffset = 0;
     if (self.topView.selectedIndex == 0) {
-        if (self.firstTableView.contentOffset.y > CGRectGetHeight(self.topView.frame) - kItemheight) {
-            placeholderOffset = CGRectGetHeight(self.topView.frame) - kItemheight;
+        if (self.firstTableView.contentOffset.y > CGRectGetHeight(self.topView.frame) - self.topView.itemHeight) {
+            placeholderOffset = CGRectGetHeight(self.topView.frame) - self.topView.itemHeight;
         }else {
             placeholderOffset = self.firstTableView.contentOffset.y;
         }
         [self.secondTableView setContentOffset:CGPointMake(0, placeholderOffset) animated:NO];
     }else {
-        if (self.secondTableView.contentOffset.y > CGRectGetHeight(self.topView.frame) - kItemheight) {
-            placeholderOffset = CGRectGetHeight(self.topView.frame) - kItemheight;
+        if (self.secondTableView.contentOffset.y > CGRectGetHeight(self.topView.frame) - self.topView.itemHeight) {
+            placeholderOffset = CGRectGetHeight(self.topView.frame) - self.topView.itemHeight;
         }else {
             placeholderOffset = self.secondTableView.contentOffset.y;
         }
@@ -90,9 +90,32 @@ iPhoneXSeries = YES;\
     }
 }
 
+// 选中第几个tab
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
     NSInteger index = ceilf(scrollView.contentOffset.x / kScreenWidth);
     self.topView.selectedIndex = index;
+}
+
+//子视图滚动的回调，用于竖直方向上滚动判断
+- (void)updateTopViewFrame:(UIScrollView *)scrollView{
+    CGFloat placeHolderHeight = CGRectGetHeight(self.topView.frame) - self.topView.itemHeight;
+    CGFloat offsetY = scrollView.contentOffset.y;
+    
+    CGFloat y = 0.0;
+    if (offsetY >= 0 && (offsetY <= placeHolderHeight)) {
+        NSLog(@"1- offsetY：%.2f <= placeHolderHeight：%.2f", offsetY, placeHolderHeight);
+        y = -offsetY;
+    } else if (offsetY > placeHolderHeight) {
+        NSLog(@"2- offsetY：%.2f > placeHolderHeight：%.2f", offsetY, placeHolderHeight);
+        y = -placeHolderHeight;
+    } else if (offsetY < 0) {
+        NSLog(@"3- offsetY：%.2f < 0,  placeHolderHeight：%.2f", offsetY, placeHolderHeight);
+        y = -offsetY;
+    }
+    
+    [self.topView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.top.offset(y + kNavBarHeight);
+    }];
 }
 
 #pragma mark - lazy
@@ -128,8 +151,6 @@ iPhoneXSeries = YES;\
 - (TopView *)topView{
     if (!_topView) {
         _topView = [[TopView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kTopViewHeight)];
-//        _topView = [[TopView alloc] initWithFrame:CGRectZero];
-        _topView.itemHeight = kItemheight;
         __weak typeof(self) WS = self;
         _topView.block = ^(NSInteger index) {
             if (index == 0) {
@@ -151,7 +172,6 @@ iPhoneXSeries = YES;\
 //        _firstTableView = [[FirstTableView alloc] initWithFrame:CGRectZero];
         _firstTableView.frame = CGRectMake(0, 0, kScreenWidth, kScreenHeight - kNavBarHeight);
         _firstTableView.topViewH = CGRectGetHeight(self.topView.frame);
-        _firstTableView.itemViweH = kItemheight;
         __weak typeof(self) WS = self;
         _firstTableView.scrollBlock = ^(UIScrollView *scrollView) {
             [WS updateTopViewFrame:scrollView];
@@ -175,27 +195,6 @@ iPhoneXSeries = YES;\
         };
     }
     return _secondTableView;
-}
-
-- (void)updateTopViewFrame:(UIScrollView *)scrollView{
-    CGFloat placeHolderHeight = CGRectGetHeight(self.topView.frame) - self.topView.itemHeight;
-    CGFloat offsetY = scrollView.contentOffset.y;
-        
-    CGFloat y = 0.0;
-    if (offsetY >= 0 && (offsetY <= placeHolderHeight)) {
-        NSLog(@"1- offsetY：%.2f <= placeHolderHeight：%.2f", offsetY, placeHolderHeight);
-        y = -offsetY;
-    } else if (offsetY > placeHolderHeight) {
-        NSLog(@"2- offsetY：%.2f > placeHolderHeight：%.2f", offsetY, placeHolderHeight);
-        y = -placeHolderHeight;
-    } else if (offsetY < 0) {
-        NSLog(@"3- offsetY：%.2f < 0,  placeHolderHeight：%.2f", offsetY, placeHolderHeight);
-        y = -offsetY;
-    }
-    
-    [self.topView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.offset(y + kNavBarHeight);
-    }];
 }
 
 @end

@@ -15,7 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SecondTableView : UITableView
 
 @property (assign, nonatomic) CGFloat topViewH;
-@property (assign, nonatomic) CGFloat itemViweH;
 
 /// scrollViewDidScroll 回调
 @property void(^scrollBlock)(UIScrollView *scrollView);
