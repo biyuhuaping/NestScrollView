@@ -62,8 +62,7 @@ iPhoneXSeries = YES;\
     
     [self.bottomScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(navBar.mas_bottom);
-        make.leading.trailing.mas_equalTo(self.view);
-        make.bottom.mas_equalTo(self.view);
+        make.leading.trailing.bottom.mas_equalTo(self.view);
     }];
 }
 
@@ -121,7 +120,7 @@ iPhoneXSeries = YES;\
 #pragma mark - lazy
 - (UIScrollView *)bottomScrollView{
     if (!_bottomScrollView) {
-        UIScrollView *scroll = [[UIScrollView alloc] initWithFrame:self.view.bounds];
+        UIScrollView *scroll = [[UIScrollView alloc] init];
         scroll.contentSize = CGSizeMake(kScreenWidth*2, 0);
         scroll.showsVerticalScrollIndicator = NO;
         scroll.showsHorizontalScrollIndicator = NO;
@@ -130,18 +129,6 @@ iPhoneXSeries = YES;\
         
         [scroll addSubview:self.firstTableView];
         [scroll addSubview:self.secondTableView];
-
-//        [self.firstTableView mas_makeConstraints:^(MASConstraintMaker *make) {
-//            make.top.leading.trailing.bottom.mas_equalTo(scroll);
-////            make.edges.mas_equalTo(scroll);
-//            make.width.mas_equalTo(kScreenWidth);
-////            make.height.mas_equalTo(kScreenHeight);
-//        }];
-//        [self.secondTableView mas_makeConstraints:^(MASConstraintMaker *make) {
-//            make.edges.mas_equalTo(scroll);
-////            make.width.mas_equalTo(kScreenWidth);
-//            make.height.mas_equalTo(kScreenHeight);
-//        }];
         _bottomScrollView = scroll;
     }
     return _bottomScrollView;
