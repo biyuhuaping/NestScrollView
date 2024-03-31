@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface TopView : UIView
 
+/// TopView上需要悬停的高度
 @property (assign, nonatomic) CGFloat itemHeight;
 @property (assign, nonatomic) NSInteger selectedIndex;
 

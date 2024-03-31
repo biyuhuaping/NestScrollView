@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic) CGFloat topViewH;
 
 /// scrollViewDidScroll 回调
-@property void(^scrollBlock)(UIScrollView *scrollView);
+@property (nonatomic, copy) void(^scrollBlock)(UIScrollView *scrollView);
 
 @end
 
