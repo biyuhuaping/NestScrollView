@@ -72,21 +72,20 @@ iPhoneXSeries = YES;\
     NSLog(@"%.2f, %.2f",scrollView.contentOffset.x, scrollView.contentOffset.y);
     
     CGFloat placeholderOffset = 0;
+    UIScrollView *scroll;
     if (self.topView.selectedIndex == 0) {
-        if (self.firstTableView.contentOffset.y > CGRectGetHeight(self.topView.frame) - self.topView.itemHeight) {
-            placeholderOffset = CGRectGetHeight(self.topView.frame) - self.topView.itemHeight;
-        }else {
-            placeholderOffset = self.firstTableView.contentOffset.y;
-        }
-        [self.secondTableView setContentOffset:CGPointMake(0, placeholderOffset) animated:NO];
+        scroll = self.firstTableView;
     }else {
-        if (self.secondTableView.contentOffset.y > CGRectGetHeight(self.topView.frame) - self.topView.itemHeight) {
-            placeholderOffset = CGRectGetHeight(self.topView.frame) - self.topView.itemHeight;
-        }else {
-            placeholderOffset = self.secondTableView.contentOffset.y;
-        }
-        [self.firstTableView setContentOffset:CGPointMake(0, placeholderOffset) animated:NO];
+        scroll = self.secondTableView;
     }
+    if (scroll.contentOffset.y > CGRectGetHeight(self.topView.frame) - self.topView.itemHeight) {
+        placeholderOffset = CGRectGetHeight(self.topView.frame) - self.topView.itemHeight;
+    }else {
+        placeholderOffset = scroll.contentOffset.y;
+    }
+    
+    [self.secondTableView setContentOffset:CGPointMake(0, placeholderOffset) animated:NO];
+    [self.firstTableView setContentOffset:CGPointMake(0, placeholderOffset) animated:NO];
 }
 
 // 选中第几个tab
